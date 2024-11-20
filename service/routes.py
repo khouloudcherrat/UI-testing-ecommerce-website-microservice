@@ -96,6 +96,8 @@ def create_products():
 ######################################################################
 # L I S T   P R O D U C T S
 ######################################################################
+
+
 @app.route("/products", methods=["GET"])
 def list_products():
     """Returns a list of Products"""
@@ -103,6 +105,7 @@ def list_products():
     products = []
     name = request.args.get("name")
     category = request.args.get("category")
+    available = request.args.get("available")
     if name:
         app.logger.info("Find by name: %s", name)
         products = Product.find_by_name(name)
@@ -111,6 +114,10 @@ def list_products():
         # create enum from string
         category_value = getattr(Category, category.upper())
         products = Product.find_by_category(category_value)
+    elif available:
+        app.logger.info("Find by availability: %s", available)
+        available_value = available.lower() in ["true", "yes", "1"]
+        products = Product.find_by_availability(available_value)
     else:
         app.logger.info("Find all")
         products = Product.all()
@@ -156,7 +163,7 @@ def update_products(product_id):
         abort(status.HTTP_404_NOT_FOUND, f"Product with id '{product_id}' was not found.")
 
     app.logger.info("Updating product: %s", product.name)
-    
+
     product.deserialize(request.get_json())
     product.update()
 
@@ -178,4 +185,3 @@ def delete_products(product_id):
     if product:
         product.delete()
     return "", status.HTTP_204_NO_CONTENT
-
