@@ -97,17 +97,21 @@ def create_products():
 ######################################################################
 # L I S T   A L L   P R O D U C T S
 ######################################################################
+@app.route("/products", methods=["GET"])
+def list_all_products():
+    """
+    Retrieve All Products
 
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
+    This endpoint will return a list of all Products
+    """
+    app.logger.info("Request to Retrieve a list of Products")
+
+    products = Product.all()
+    results = [product.serialize() for product in products]
+    return results, status.HTTP_200_OK
 
 ######################################################################
 # R E A D   A   P R O D U C T
-######################################################################
-
-######################################################################
-# READ A PRODUCT
 ######################################################################
 @app.route("/products/<int:product_id>", methods=["GET"])
 def get_products(product_id):
@@ -125,10 +129,10 @@ def get_products(product_id):
     app.logger.info("Returning product: %s", product.name)
     return product.serialize(), status.HTTP_200_OK
 
+
 ######################################################################
 # U P D A T E   A   P R O D U C T
 ######################################################################
-
 @app.route("/products/<int:product_id>", methods=["PUT"])
 def update_products(product_id):
     """
@@ -149,10 +153,10 @@ def update_products(product_id):
 
     return product.serialize(), status.HTTP_200_OK
 
+
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
-
 @app.route("/products/<int:product_id>", methods=["DELETE"])
 def delete_products(product_id):
     """
@@ -165,3 +169,4 @@ def delete_products(product_id):
     if product:
         product.delete()
     return "", status.HTTP_204_NO_CONTENT
+

@@ -214,7 +214,7 @@ class TestProductRoutes(TestCase):
     # ----------------------------------------------------------
     def test_delete_product(self):
         """It should delete an exsiting Product"""
-        # Create product to update
+        # Create product to delete
         test_product = self._create_products(1)[0]
 
         # Delete the product
@@ -231,6 +231,16 @@ class TestProductRoutes(TestCase):
         response = self.client.delete(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
+    # ----------------------------------------------------------
+    # TEST LIST ALL PRODUCTS
+    # ----------------------------------------------------------
+    def test_list_all_products(self):
+        """It should list all exsiting Products"""
+        products = self._create_products(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), 5)
 
     ######################################################################
     # Utility functions
