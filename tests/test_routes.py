@@ -26,6 +26,7 @@ Test cases can be run with the following:
 """
 import os
 import logging
+from urllib.parse import quote_plus
 from decimal import Decimal
 from unittest import TestCase
 from service import app
@@ -241,6 +242,21 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+    
+    # ----------------------------------------------------------
+    # TEST LIST PRODUCTS BY NAME
+    # ----------------------------------------------------------
+    def test_query_by_name(self):
+        """It should query products by name"""
+        products = self._create_products(5)
+        test_name = products[0].name        
+        count = sum(1 for product in products if product.name == test_name)
+        response = self.client.get(
+            BASE_URL, query_string=f"name={quote_plus(test_name)}"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), count)
 
     ######################################################################
     # Utility functions
